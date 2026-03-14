@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Željice – Lista Želja</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --rose-50: #fff1f4;
+    --rose-100: #ffe0e8;
+    --rose-200: #ffc4d4;
+    --rose-300: #ff9ab5;
+    --rose-400: #ff6b97;
+    --rose-500: #f43f78;
+    --blush: #f9e8ee;
+    --blush-dark: #f0d0dc;
+    --cream: #fffaf8;
+    --text-dark: #4a2535;
+    --text-mid: #8c566a;
+    --text-light: #c08fa0;
+    --white: #ffffff;
+    --shadow: 0 4px 24px rgba(200, 100, 130, 0.12);
+    --shadow-hover: 0 8px 32px rgba(200, 100, 130, 0.22);
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background decoration */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -120px; right: -120px;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, var(--rose-200) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -80px; left: -80px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, var(--rose-100) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: block; }
+
+  /* ─── LANDING ─── */
+  #landing {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 20px; text-align: center;
+  }
+  #landing .logo { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--rose-500); margin-bottom: 8px; }
+  #landing .logo span { font-style: italic; }
+  #landing .tagline { font-size: 1rem; color: var(--text-mid); margin-bottom: 48px; font-weight: 300; letter-spacing: 0.04em; }
+
+  .card-choice {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    max-width: 480px; width: 100%; margin-bottom: 32px;
+  }
+  .choice-btn {
+    background: var(--white); border: 2px solid var(--rose-100);
+    border-radius: var(--radius); padding: 28px 20px;
+    cursor: pointer; transition: all 0.25s ease;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .choice-btn:hover { border-color: var(--rose-300); transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  .choice-btn .icon { font-size: 2.2rem; }
+  .choice-btn .label { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--text-dark); }
+  .choice-btn .sub { font-size: 0.78rem; color: var(--text-light); font-weight: 300; }
+
+  .or-divider { color: var(--text-light); font-size: 0.85rem; margin: 4px 0 16px; }
+
+  .enter-code-row { display: flex; gap: 8px; max-width: 480px; width: 100%; }
+  .enter-code-row input {
+    flex: 1; padding: 14px 18px; border: 2px solid var(--rose-100);
+    border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; outline: none; background: var(--white); color: var(--text-dark);
+    transition: border-color 0.2s;
+  }
+  .enter-code-row input::placeholder { color: var(--text-light); }
+  .enter-code-row input:focus { border-color: var(--rose-300); }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 28px; border-radius: 50px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem; font-weight: 500; cursor: pointer; border: none;
+    transition: all 0.22s ease; text-decoration: none;
+  }
+  .btn-primary { background: var(--rose-400); color: #fff; }
+  .btn-primary:hover { background: var(--rose-500); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(244, 63, 120, 0.35); }
+  .btn-outline { background: transparent; color: var(--rose-400); border: 2px solid var(--rose-300); }
+  .btn-outline:hover { background: var(--rose-50); }
+  .btn-ghost { background: transparent; color: var(--text-mid); padding: 10px 16px; }
+  .btn-ghost:hover { color: var(--rose-400); }
+  .btn-sm { padding: 9px 18px; font-size: 0.82rem; }
+  .btn-icon { padding: 10px 14px; }
+
+  /* ─── HEADER ─── */
+  header {
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rose-100);
+    padding: 14px 24px; display: flex; align-items: center;
+    justify-content: space-between; position: sticky; top: 0; z-index: 100;
+  }
+  .header-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--rose-500); font-style: italic; }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+
+  /* ─── MAIN CONTENT ─── */
+  .page-content { max-width: 680px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  /* ─── SETUP SCREEN ─── */
+  .setup-hero { text-align: center; margin-bottom: 36px; }
+  .setup-hero h1 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--text-dark); margin-bottom: 8px; }
+  .setup-hero p { color: var(--text-mid); font-weight: 300; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-size: 0.85rem; color: var(--text-mid); margin-bottom: 6px; font-weight: 500; letter-spacing: 0.03em; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 14px 18px; border: 2px solid var(--rose-100);
+    border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; outline: none; background: var(--white); color: var(--text-dark);
+    transition: border-color 0.2s; resize: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--rose-300); }
+  .form-group textarea { min-height: 80px; }
+
+  /* ─── LIST VIEW ─── */
+  .list-header { margin-bottom: 28px; }
+  .list-event-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--rose-100); color: var(--rose-500);
+    padding: 5px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .list-title { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--text-dark); }
+  .list-subtitle { color: var(--text-mid); margin-top: 4px; font-weight: 300; font-size: 0.92rem; }
+  .list-meta { display: flex; gap: 16px; margin-top: 12px; align-items: center; flex-wrap: wrap; }
+  .meta-pill {
+    display: flex; align-items: center; gap: 5px;
+    background: var(--blush); padding: 5px 12px; border-radius: 50px;
+    font-size: 0.8rem; color: var(--text-mid);
+  }
+
+  /* Progress bar */
+  .progress-wrap { background: var(--rose-100); border-radius: 50px; height: 8px; margin: 20px 0 8px; overflow: hidden; }
+  .progress-bar { background: linear-gradient(90deg, var(--rose-300), var(--rose-400)); height: 100%; border-radius: 50px; transition: width 0.5s ease; }
+  .progress-label { font-size: 0.8rem; color: var(--text-mid); }
+
+  /* ─── GIFT ITEMS ─── */
+  .gifts-grid { display: flex; flex-direction: column; gap: 14px; }
+
+  .gift-card {
+    background: var(--white); border: 2px solid var(--rose-100);
+    border-radius: var(--radius); padding: 20px; display: grid;
+    grid-template-columns: 1fr auto; gap: 12px; transition: all 0.2s ease;
+    position: relative; overflow: hidden;
+  }
+  .gift-card:hover { box-shadow: var(--shadow); }
+  .gift-card.claimed { border-color: var(--rose-200); background: var(--blush); }
+  .gift-card.claimed::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--rose-300), var(--rose-400));
+  }
+
+  .gift-info { min-width: 0; }
+  .gift-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--text-dark); margin-bottom: 4px; }
+  .gift-desc { font-size: 0.82rem; color: var(--text-mid); font-weight: 300; margin-bottom: 8px; line-height: 1.5; }
+  .gift-footer { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .gift-price { font-size: 1rem; font-weight: 500; color: var(--rose-500); }
+  .gift-link a {
+    font-size: 0.8rem; color: var(--text-mid); text-decoration: none;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .gift-link a:hover { color: var(--rose-400); }
+
+  .gift-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .claim-badge {
+    background: linear-gradient(135deg, var(--rose-300), var(--rose-400));
+    color: #fff; padding: 5px 12px; border-radius: 50px;
+    font-size: 0.78rem; font-weight: 500; white-space: nowrap;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .claimed-by { font-size: 0.78rem; color: var(--text-mid); text-align: right; }
+
+  /* Edit mode */
+  .gift-edit-actions { display: flex; gap: 6px; }
+
+  /* ADD GIFT FORM */
+  .add-gift-panel {
+    background: var(--white); border: 2px dashed var(--rose-200);
+    border-radius: var(--radius); padding: 24px; margin-top: 16px;
+  }
+  .add-gift-panel h3 { font-family: 'Playfair Display', serif; color: var(--text-dark); margin-bottom: 18px; font-size: 1.1rem; }
+
+  /* Product search */
+  .product-search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .product-search-row input { flex: 1; }
+  .search-results {
+    background: var(--blush); border-radius: var(--radius-sm);
+    padding: 12px; margin-top: 8px; display: none;
+  }
+  .search-results.visible { display: block; }
+  .search-result-item {
+    padding: 10px 12px; border-radius: 8px; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: background 0.15s;
+  }
+  .search-result-item:hover { background: var(--rose-100); }
+  .search-result-item .sr-name { font-size: 0.88rem; color: var(--text-dark); }
+  .search-result-item .sr-price { font-size: 0.85rem; color: var(--rose-500); font-weight: 500; }
+
+  /* ─── SHARE / QR PANEL ─── */
+  .share-panel {
+    background: var(--white); border: 2px solid var(--rose-100);
+    border-radius: var(--radius); padding: 28px; text-align: center; margin-top: 20px;
+  }
+  .share-panel h2 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 6px; }
+  .share-panel p { font-size: 0.85rem; color: var(--text-mid); margin-bottom: 20px; }
+  #qr-code { display: inline-block; margin: 0 auto 16px; }
+  #qr-code canvas, #qr-code img { border-radius: 12px; }
+  .share-link-row { display: flex; gap: 8px; }
+  .share-link-row input {
+    flex: 1; padding: 12px 16px; border: 2px solid var(--rose-100);
+    border-radius: var(--radius-sm); font-size: 0.85rem;
+    background: var(--blush); color: var(--text-mid); outline: none;
+  }
+
+  /* ─── GUEST CLAIM MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(74, 37, 53, 0.3);
+    backdrop-filter: blur(4px); z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--white); border-radius: var(--radius);
+    padding: 32px; max-width: 400px; width: 100%;
+    transform: scale(0.95); transition: transform 0.2s;
+    box-shadow: 0 20px 60px rgba(200, 80, 120, 0.2);
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 6px; }
+  .modal p { font-size: 0.88rem; color: var(--text-mid); margin-bottom: 20px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+  /* ─── TABS ─── */
+  .tabs { display: flex; gap: 4px; background: var(--blush); border-radius: 50px; padding: 4px; margin-bottom: 28px; }
+  .tab {
+    flex: 1; padding: 10px; border: none; background: transparent;
+    border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    cursor: pointer; color: var(--text-mid); transition: all 0.2s; font-weight: 500;
+  }
+  .tab.active { background: var(--white); color: var(--rose-500); box-shadow: var(--shadow); }
+
+  /* ─── MONETIZATION SCREEN ─── */
+  .mono-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  .mono-card {
+    background: var(--white); border: 2px solid var(--rose-100);
+    border-radius: var(--radius); padding: 22px;
+  }
+  .mono-card .icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .mono-card h3 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 6px; color: var(--text-dark); }
+  .mono-card p { font-size: 0.8rem; color: var(--text-mid); line-height: 1.6; }
+  .mono-card .amount { font-size: 1.1rem; font-weight: 600; color: var(--rose-500); margin-top: 8px; }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text-dark); color: #fff; padding: 12px 24px;
+    border-radius: 50px; font-size: 0.88rem; z-index: 300;
+    transition: transform 0.3s ease; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 480px) {
+    .card-choice { grid-template-columns: 1fr; }
+    .mono-grid { grid-template-columns: 1fr; }
+    .list-title { font-size: 1.6rem; }
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .gift-card { animation: fadeIn 0.3s ease both; }
+  .gift-card:nth-child(2) { animation-delay: 0.05s; }
+  .gift-card:nth-child(3) { animation-delay: 0.1s; }
+  .gift-card:nth-child(4) { animation-delay: 0.15s; }
+
+  .fade-in { animation: fadeIn 0.4s ease both; }
+
+  /* Flower decoration */
+  .deco { position: fixed; pointer-events: none; z-index: 0; opacity: 0.35; font-size: 2rem; }
+  .deco-1 { top: 12%; left: 4%; }
+  .deco-2 { top: 35%; right: 3%; }
+  .deco-3 { bottom: 20%; left: 6%; }
+</style>
+</head>
+<body>
+
+<div class="deco deco-1">🌸</div>
+<div class="deco deco-2">✨</div>
+<div class="deco deco-3">🌷</div>
+
+<!-- ══ LANDING SCREEN ══ -->
+<div id="screen-landing" class="screen active">
+  <div id="landing">
+    <div class="logo">Željice <span>✦</span></div>
+    <p class="tagline">tvoja lista savršenih poklona</p>
+
+    <div class="card-choice">
+      <button class="choice-btn" onclick="startCreate()">
+        <span class="icon">🎀</span>
+        <span class="label">Napravi listu</span>
+        <span class="sub">Za slavlje, vjenčanje, rodjendan…</span>
+      </button>
+      <button class="choice-btn" onclick="showMonetization()">
+        <span class="icon">💡</span>
+        <span class="label">Plan zarade</span>
+        <span class="sub">Kako monetizirati aplikaciju</span>
+      </button>
+    </div>
+
+    <p class="or-divider">✦ ili otvori tuđu listu ✦</p>
+
+    <div class="enter-code-row">
+      <input type="text" id="guest-code-input" placeholder="Unesi kod liste (npr. BOZIC-2025)" />
+      <button class="btn btn-primary" onclick="openGuestList()">Otvori 🎁</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETUP SCREEN ══ -->
+<div id="screen-setup" class="screen">
+  <header>
+    <span class="header-logo">Željice ✦</span>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="goHome()">← Natrag</button>
+    </div>
+  </header>
+  <div class="page-content">
+    <div class="setup-hero fade-in">
+      <h1>Napravi svoju listu 🎀</h1>
+      <p>Ispuni par detalja i odmah kreći dodavati poklone</p>
+    </div>
+    <div class="form-group">
+      <label>Tvoje ime / nadimak</label>
+      <input type="text" id="setup-name" placeholder="npr. Ana ili Mama" />
+    </div>
+    <div class="form-group">
+      <label>Prigoda</label>
+      <select id="setup-occasion">
+        <option value="Rodjendan 🎂">Rodjendan 🎂</option>
+        <option value="Vjenčanje 💍">Vjenčanje 💍</option>
+        <option value="Božić 🎄">Božić 🎄</option>
+        <option value="Baby shower 👶">Baby shower 👶</option>
+        <option value="Maturalna večer 🎓">Maturalna večer 🎓</option>
+        <option value="Praznik 🎉">Praznik 🎉</option>
+        <option value="Ostalo ✨">Ostalo ✨</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Datum prigode (neobavezno)</label>
+      <input type="date" id="setup-date" />
+    </div>
+    <div class="form-group">
+      <label>Kratka poruka gostima (neobavezno)</label>
+      <textarea id="setup-msg" placeholder="npr. Ne trebate ništa donositi, ali ako baš inzistirate – evo ideja! 😄"></textarea>
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="createList()">Kreiraj listu i dodaj poklone →</button>
+  </div>
+</div>
+
+<!-- ══ LIST SCREEN (Owner) ══ -->
+<div id="screen-list" class="screen">
+  <header>
+    <span class="header-logo">Željice ✦</span>
+    <div class="header-actions">
+      <button class="btn btn-outline btn-sm" onclick="showSharePanel()">Dijeli 🔗</button>
+      <button class="btn btn-ghost btn-sm" onclick="goHome()">🏠</button>
+    </div>
+  </header>
+  <div class="page-content">
+
+    <div class="list-header fade-in">
+      <div class="list-event-badge" id="list-event-badge">🎂 Rodjendan</div>
+      <div class="list-title" id="list-title">Anina Lista</div>
+      <div class="list-subtitle" id="list-subtitle">Poruka za goste</div>
+      <div class="list-meta">
+        <span class="meta-pill" id="list-date-pill" style="display:none">📅 <span id="list-date-text"></span></span>
+        <span class="meta-pill" id="list-code-pill">🔑 Kod: <strong id="list-code-display"></strong></span>
+      </div>
+      <div class="progress-wrap" id="progress-wrap" style="display:none">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <p class="progress-label" id="progress-label"></p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('gifts')">🎁 Pokloni</button>
+      <button class="tab" onclick="switchTab('share')">📤 Dijeli</button>
+    </div>
+
+    <div id="tab-gifts">
+      <div class="gifts-grid" id="gifts-grid"></div>
+
+      <div class="add-gift-panel" id="add-gift-panel" style="margin-top:20px">
+        <h3>➕ Dodaj poklon</h3>
+
+        <!-- Web search simulation -->
+        <div class="product-search-row">
+          <input type="text" id="product-search-input" placeholder="Pretraži web shop (npr. parfem, knjiga…)" />
+          <button class="btn btn-outline btn-sm" onclick="searchProducts()">Traži 🔍</button>
+        </div>
+        <div class="search-results" id="search-results"></div>
+
+        <div class="form-group" style="margin-top:14px">
+          <label>Naziv poklona *</label>
+          <input type="text" id="gift-name" placeholder="npr. Parfem – Chanel No. 5" />
+        </div>
+        <div class="form-group">
+          <label>Opis (neobavezno)</label>
+          <input type="text" id="gift-desc" placeholder="npr. 50ml, u smeđoj kutiji" />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label>Cijena (€)</label>
+            <input type="number" id="gift-price" placeholder="0.00" min="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label>Link na proizvod</label>
+            <input type="url" id="gift-link" placeholder="https://..." />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Prioritet</label>
+          <select id="gift-priority">
+            <option value="🌟 Jako želim">🌟 Jako želim</option>
+            <option value="💛 Bilo bi lijepo">💛 Bilo bi lijepo</option>
+            <option value="🤍 Alternativa">🤍 Alternativa</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="addGift()">Dodaj poklon 🎁</button>
+      </div>
+    </div>
+
+    <div id="tab-share" style="display:none">
+      <div class="share-panel fade-in">
+        <h2>Podijeli svoju listu 💌</h2>
+        <p>Pošalji ovaj QR kod ili link gostima. Oni mogu označiti što će pokloniti!</p>
+        <div id="qr-code"></div>
+        <div class="share-link-row">
+          <input type="text" id="share-link-input" readonly />
+          <button class="btn btn-primary btn-sm" onclick="copyLink()">Kopiraj</button>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+          <button class="btn btn-outline btn-sm" onclick="downloadQR()">⬇ Preuzmi QR</button>
+          <button class="btn btn-outline btn-sm" onclick="shareWhatsApp()">WhatsApp 💬</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ GUEST VIEW SCREEN ══ -->
+<div id="screen-guest" class="screen">
+  <header>
+    <span class="header-logo">Željice ✦</span>
+    <div class="header-actions">
+      <button class="btn btn-primary btn-sm" onclick="startCreate()">Napravi svoju ✨</button>
+    </div>
+  </header>
+  <div class="page-content">
+    <div class="list-header fade-in">
+      <div class="list-event-badge" id="guest-event-badge">🎂 Rodjendan</div>
+      <div class="list-title" id="guest-list-title">Lista</div>
+      <div class="list-subtitle" id="guest-list-subtitle"></div>
+      <div class="list-meta">
+        <span class="meta-pill" id="guest-date-pill" style="display:none">📅 <span id="guest-date-text"></span></span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="guest-progress-bar"></div>
+      </div>
+      <p class="progress-label" id="guest-progress-label"></p>
+    </div>
+
+    <div class="gifts-grid" id="guest-gifts-grid"></div>
+
+    <div style="text-align:center;margin-top:36px;padding:24px;background:var(--blush);border-radius:var(--radius)">
+      <p style="color:var(--text-mid);font-size:0.88rem;margin-bottom:12px">Voljeli biste i sami napraviti listu želja? 🌸</p>
+      <button class="btn btn-primary" onclick="startCreate()">Napravi svoju listu besplatno</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MONETIZATION SCREEN ══ -->
+<div id="screen-mono" class="screen">
+  <header>
+    <span class="header-logo">Željice ✦</span>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="goHome()">← Natrag</button>
+    </div>
+  </header>
+  <div class="page-content">
+    <div class="setup-hero fade-in">
+      <h1>Plan Monetizacije 💰</h1>
+      <p>Kako Željice može postati profitabilna platforma</p>
+    </div>
+
+    <div class="mono-grid">
+      <div class="mono-card">
+        <div class="icon">🛒</div>
+        <h3>Affiliate provizija</h3>
+        <p>Svaki klik na link proizvoda nosi 3–8% provizije. Integracija s Amazonom, Notinom, Zalom, Müller-om.</p>
+        <div class="amount">3–8% po kupnji</div>
+      </div>
+      <div class="mono-card">
+        <div class="icon">✨</div>
+        <h3>Premium lista</h3>
+        <p>Neograničeni pokloni, vlastiti URL, personalizirani dizajn, statistike i analitika tko je gledao.</p>
+        <div class="amount">€2.99 / lista</div>
+      </div>
+      <div class="mono-card">
+        <div class="icon">💍</div>
+        <h3>Vjenčanje paket</h3>
+        <p>Poseban paket za mladence – grupni pokloni, praćenje doprinosa, integracija s web shopom.</p>
+        <div class="amount">€19.99 / paket</div>
+      </div>
+      <div class="mono-card">
+        <div class="icon">🏪</div>
+        <h3>Partnerski webshop</h3>
+        <p>Web shopovi plaćaju za "featured" poziciju u pretrazi. "Preporučeni prodavač" oznaka.</p>
+        <div class="amount">€99 / mj</div>
+      </div>
+      <div class="mono-card">
+        <div class="icon">🎁</div>
+        <h3>Grupni poklon</h3>
+        <p>Gosti skupljaju novac za jedan poklon direktno unutar aplikacije. Naplata 1.5% transakcije.</p>
+        <div class="amount">1.5% transakcija</div>
+      </div>
+      <div class="mono-card">
+        <div class="icon">🌐</div>
+        <h3>B2B – Webshopovi</h3>
+        <p>API za web shopove da integriraju gumb "Dodaj u Željice" direktno na svojoj stranici.</p>
+        <div class="amount">€49–299 / mj</div>
+      </div>
+    </div>
+
+    <div style="background:var(--white);border:2px solid var(--rose-100);border-radius:var(--radius);padding:24px;margin-bottom:20px">
+      <h2 style="font-family:'Playfair Display',serif;margin-bottom:14px">🛍️ Integracije s web shopovima</h2>
+      <p style="font-size:0.88rem;color:var(--text-mid);line-height:1.8;margin-bottom:12px">
+        Željice se može integrirati s popularnim web shopovima putem:
+      </p>
+      <ul style="padding-left:20px;font-size:0.85rem;color:var(--text-mid);line-height:2">
+        <li><strong>Browser ekstenzija</strong> – gumb "Dodaj u Željice" dok browsaš bilo koji web shop</li>
+        <li><strong>Amazon PA-API</strong> – direktna pretraga i uvoz cijena s Amazona</li>
+        <li><strong>Zara / H&amp;M / ASOS API</strong> – import fashion artikala jednim klikom</li>
+        <li><strong>Notino / Müller affiliate</strong> – automatska pretraga parfema i kozmetike</li>
+        <li><strong>Vlastiti webshopping partneri</strong> – bijeli label rješenje za webshopove</li>
+        <li><strong>Universal link scraper</strong> – pasti link, automatski povuče naziv, sliku i cijenu</li>
+      </ul>
+    </div>
+
+    <div style="background:linear-gradient(135deg,var(--rose-100),var(--blush));border-radius:var(--radius);padding:24px;text-align:center">
+      <h2 style="font-family:'Playfair Display',serif;margin-bottom:8px">Projekcija prihoda</h2>
+      <p style="font-size:0.85rem;color:var(--text-mid);margin-bottom:16px">Konzervativna procjena za 12 mj s 5,000 aktivnih korisnika</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div>
+          <div style="font-size:1.5rem;font-weight:600;color:var(--rose-500)">€1,200</div>
+          <div style="font-size:0.78rem;color:var(--text-mid)">Affiliate / mj</div>
+        </div>
+        <div>
+          <div style="font-size:1.5rem;font-weight:600;color:var(--rose-500)">€800</div>
+          <div style="font-size:0.78rem;color:var(--text-mid)">Premium pretplata / mj</div>
+        </div>
+        <div>
+          <div style="font-size:1.5rem;font-weight:600;color:var(--rose-500)">€500</div>
+          <div style="font-size:0.78rem;color:var(--text-mid)">Partnerski shopovi / mj</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:28px">
+      <button class="btn btn-primary" onclick="startCreate()">Isprobaj aplikaciju 🎀</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CLAIM MODAL ══ -->
+<div class="modal-overlay" id="claim-modal">
+  <div class="modal">
+    <h2>Rezerviraj poklon 🎁</h2>
+    <p id="claim-gift-name-display" style="font-weight:500;color:var(--rose-500);margin-bottom:4px"></p>
+    <p>Upiši svoje ime da ostali gosti znaju da si ti preuzeo/la ovaj poklon.</p>
+    <div class="form-group">
+      <label>Tvoje ime</label>
+      <input type="text" id="claim-name-input" placeholder="npr. Petra ili Teta Marija" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" style="flex:1" onclick="closeClaimModal()">Odustani</button>
+      <button class="btn btn-primary" style="flex:1" onclick="confirmClaim()">Rezerviraj ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════
+let currentList = null;    // owner's list object
+let currentGuestList = null; // when viewing as guest
+let claimingGiftId = null;
+let isGuestMode = false;
+let qrInstance = null;
+
+// Simulated DB (localStorage)
+function saveList(list) {
+  const all = JSON.parse(localStorage.getItem('zeljice_lists') || '{}');
+  all[list.code] = list;
+  localStorage.setItem('zeljice_lists', JSON.stringify(all));
+}
+function loadList(code) {
+  const all = JSON.parse(localStorage.getItem('zeljice_lists') || '{}');
+  return all[code.toUpperCase()] || null;
+}
+function refreshList() {
+  if (currentList) {
+    const updated = loadList(currentList.code);
+    if (updated) currentList = updated;
+  }
+  if (currentGuestList) {
+    const updated = loadList(currentGuestList.code);
+    if (updated) currentGuestList = updated;
+  }
+}
+
+function generateCode(name) {
+  const clean = name.toUpperCase().replace(/[^A-Z]/g, '').substring(0,4) || 'LIST';
+  return clean + '-' + Math.floor(1000 + Math.random()*9000);
+}
+
+// ══════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════
+function show(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screenId).classList.add('active');
+}
+function goHome() { show('landing'); }
+function startCreate() { show('setup'); }
+function showMonetization() { show('mono'); }
+
+// ══════════════════════════════════════
+//  CREATE LIST
+// ══════════════════════════════════════
+function createList() {
+  const name = document.getElementById('setup-name').value.trim();
+  const occasion = document.getElementById('setup-occasion').value;
+  const date = document.getElementById('setup-date').value;
+  const msg = document.getElementById('setup-msg').value.trim();
+
+  if (!name) { toast('Upiši svoje ime! 🌸'); return; }
+
+  currentList = {
+    code: generateCode(name),
+    ownerName: name,
+    occasion,
+    date,
+    message: msg || `Dragi gosti, evo mojih ideja za poklone! 🌸`,
+    gifts: [],
+    createdAt: new Date().toISOString()
+  };
+  saveList(currentList);
+  renderOwnerList();
+  show('list');
+}
+
+// ══════════════════════════════════════
+//  RENDER OWNER LIST
+// ══════════════════════════════════════
+function renderOwnerList() {
+  const l = currentList;
+  document.getElementById('list-event-badge').textContent = l.occasion;
+  document.getElementById('list-title').textContent = l.ownerName + 'ina Lista 🎀';
+  document.getElementById('list-subtitle').textContent = l.message;
+  document.getElementById('list-code-display').textContent = l.code;
+
+  if (l.date) {
+    document.getElementById('list-date-pill').style.display = 'flex';
+    document.getElementById('list-date-text').textContent = formatDate(l.date);
+  }
+
+  renderGifts(l.gifts, 'gifts-grid', false);
+  updateProgress(l.gifts);
+  setupSharePanel(l.code);
+}
+
+function renderGifts(gifts, containerId, guestMode) {
+  const grid = document.getElementById(containerId);
+  if (!gifts.length) {
+    grid.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-light);font-size:0.88rem">Još nema poklona – dodaj prvi! 🎁</div>';
+    return;
+  }
+  grid.innerHTML = gifts.map((g, i) => giftCardHTML(g, i, guestMode)).join('');
+}
+
+function giftCardHTML(g, i, guestMode) {
+  const isClaimed = !!g.claimedBy;
+  const priceHTML = g.price ? `<span class="gift-price">€${parseFloat(g.price).toFixed(2)}</span>` : '';
+  const linkHTML = g.link ? `<span class="gift-link"><a href="${g.link}" target="_blank">🔗 Otvori u shopu</a></span>` : '';
+  const priorityHTML = `<span style="font-size:0.78rem;color:var(--text-light)">${g.priority || ''}</span>`;
+
+  let actionsHTML = '';
+  if (guestMode) {
+    if (isClaimed) {
+      actionsHTML = `<div class="claim-badge">✓ Rezervirano</div><div class="claimed-by">od: ${g.claimedBy}</div>`;
+    } else {
+      actionsHTML = `<button class="btn btn-primary btn-sm" onclick="openClaimModal(${i})">Uzimam ja 🎁</button>`;
+    }
+  } else {
+    actionsHTML = `
+      <div class="gift-edit-actions">
+        ${isClaimed ? `<div class="claimed-by" style="text-align:right;font-size:0.78rem">✓ ${g.claimedBy}</div>` : ''}
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="removeGift(${i})" title="Ukloni">🗑</button>
+      </div>`;
+  }
+
+  return `
+    <div class="gift-card ${isClaimed ? 'claimed' : ''}">
+      <div class="gift-info">
+        <div class="gift-name">${g.name}</div>
+        ${g.desc ? `<div class="gift-desc">${g.desc}</div>` : ''}
+        <div class="gift-footer">${priceHTML}${linkHTML}${priorityHTML}</div>
+      </div>
+      <div class="gift-actions">${actionsHTML}</div>
+    </div>`;
+}
+
+function updateProgress(gifts) {
+  const total = gifts.length;
+  const claimed = gifts.filter(g => g.claimedBy).length;
+  const wrap = document.getElementById('progress-wrap');
+  const bar = document.getElementById('progress-bar');
+  const label = document.getElementById('progress-label');
+  if (!wrap) return;
+  if (total > 0) {
+    wrap.style.display = 'block';
+    const pct = Math.round((claimed/total)*100);
+    bar.style.width = pct + '%';
+    label.textContent = `${claimed} od ${total} poklona rezervirano (${pct}%)`;
+  } else {
+    wrap.style.display = 'none';
+    label.textContent = '';
+  }
+}
+
+// ══════════════════════════════════════
+//  ADD GIFT
+// ══════════════════════════════════════
+function addGift() {
+  const name = document.getElementById('gift-name').value.trim();
+  if (!name) { toast('Upiši naziv poklona! 🌸'); return; }
+
+  const gift = {
+    id: Date.now(),
+    name,
+    desc: document.getElementById('gift-desc').value.trim(),
+    price: document.getElementById('gift-price').value,
+    link: document.getElementById('gift-link').value.trim(),
+    priority: document.getElementById('gift-priority').value,
+    claimedBy: null
+  };
+
+  currentList.gifts.push(gift);
+  saveList(currentList);
+  renderGifts(currentList.gifts, 'gifts-grid', false);
+  updateProgress(currentList.gifts);
+
+  // Clear form
+  ['gift-name','gift-desc','gift-price','gift-link','product-search-input'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('search-results').classList.remove('visible');
+  toast('Poklon dodan! 🎁');
+}
+
+function removeGift(index) {
+  currentList.gifts.splice(index, 1);
+  saveList(currentList);
+  renderGifts(currentList.gifts, 'gifts-grid', false);
+  updateProgress(currentList.gifts);
+  toast('Poklon uklonjen');
+}
+
+// ══════════════════════════════════════
+//  PRODUCT SEARCH (simulated)
+// ══════════════════════════════════════
+const MOCK_PRODUCTS = [
+  { name: 'Chanel No. 5 – parfem 50ml', price: 89.99, shop: 'Notino', url: 'https://www.notino.hr' },
+  { name: 'Air Pods Pro 2. generacija', price: 219.00, shop: 'Amazon', url: 'https://www.amazon.de' },
+  { name: 'Rimowa Classic Cabin kofer', price: 699.00, shop: 'Rimowa', url: 'https://www.rimowa.com' },
+  { name: 'Le Creuset lonac 26cm – crveni', price: 249.00, shop: 'Zara Home', url: 'https://www.zarahome.com' },
+  { name: 'Kindle Paperwhite 16GB', price: 139.99, shop: 'Amazon', url: 'https://www.amazon.de' },
+  { name: 'Nike Air Max 90 – bijele', price: 129.99, shop: 'Nike', url: 'https://www.nike.com' },
+  { name: 'Dyson Airwrap – komplet', price: 499.00, shop: 'Müller', url: 'https://www.muller.hr' },
+  { name: 'Pandora narukvica – srebrna', price: 79.00, shop: 'Pandora', url: 'https://www.pandora.net' },
+  { name: 'Smeg toster – pastelno roza', price: 159.00, shop: 'Harvey Norman', url: 'https://www.harveynorman.hr' },
+  { name: 'Montblanc kemijska olovka', price: 245.00, shop: 'Galeries Lafayette', url: '#' },
+];
+
+function searchProducts() {
+  const q = document.getElementById('product-search-input').value.toLowerCase().trim();
+  if (!q) { toast('Upiši što tražiš 🔍'); return; }
+
+  const results = MOCK_PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(q) || p.shop.toLowerCase().includes(q)
+  ).slice(0, 4);
+
+  const container = document.getElementById('search-results');
+  if (!results.length) {
+    container.innerHTML = '<p style="font-size:0.82rem;color:var(--text-light);padding:8px">Nema rezultata. Upiši detalje ručno ili zalijepite link izravno.</p>';
+  } else {
+    container.innerHTML = results.map(r => `
+      <div class="search-result-item" onclick="selectProduct('${r.name}','${r.price}','${r.url}')">
+        <div>
+          <div class="sr-name">${r.name}</div>
+          <div style="font-size:0.75rem;color:var(--text-light)">${r.shop}</div>
+        </div>
+        <div class="sr-price">€${r.price.toFixed(2)}</div>
+      </div>`).join('');
+  }
+  container.classList.add('visible');
+}
+
+function selectProduct(name, price, url) {
+  document.getElementById('gift-name').value = name;
+  document.getElementById('gift-price').value = price;
+  document.getElementById('gift-link').value = url;
+  document.getElementById('search-results').classList.remove('visible');
+  toast('Proizvod odabran! ✨');
+}
+
+// ══════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-gifts').style.display = tab === 'gifts' ? 'block' : 'none';
+  document.getElementById('tab-share').style.display = tab === 'share' ? 'block' : 'none';
+  if (tab === 'share') generateQR();
+}
+
+function showSharePanel() {
+  switchTab('share');
+  document.querySelectorAll('.tab')[1].classList.add('active');
+  document.querySelectorAll('.tab')[0].classList.remove('active');
+  document.getElementById('tab-gifts').style.display = 'none';
+  document.getElementById('tab-share').style.display = 'block';
+  generateQR();
+}
+
+// ══════════════════════════════════════
+//  QR CODE & SHARE
+// ══════════════════════════════════════
+function setupSharePanel(code) {
+  const shareLink = window.location.href.split('?')[0] + '?lista=' + code;
+  document.getElementById('share-link-input').value = shareLink;
+}
+
+function generateQR() {
+  const container = document.getElementById('qr-code');
+  container.innerHTML = '';
+  const code = currentList ? currentList.code : (currentGuestList ? currentGuestList.code : '');
+  const shareLink = window.location.href.split('?')[0] + '?lista=' + code;
+
+  try {
+    qrInstance = new QRCode(container, {
+      text: shareLink,
+      width: 180, height: 180,
+      colorDark: '#4a2535',
+      colorLight: '#fff1f4',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch(e) {
+    container.innerHTML = '<div style="padding:20px;background:var(--blush);border-radius:12px;font-size:0.85rem;color:var(--text-mid)">QR kod: <strong>' + code + '</strong></div>';
+  }
+  document.getElementById('share-link-input').value = shareLink;
+}
+
+function copyLink() {
+  const val = document.getElementById('share-link-input').value;
+  navigator.clipboard.writeText(val).then(() => toast('Link kopiran! 📋')).catch(() => toast('Kopiraj link ručno'));
+}
+
+function downloadQR() {
+  const canvas = document.querySelector('#qr-code canvas');
+  if (!canvas) { toast('QR kod nije generiran'); return; }
+  const a = document.createElement('a');
+  a.download = 'zeljice-qr-' + currentList.code + '.png';
+  a.href = canvas.toDataURL();
+  a.click();
+  toast('QR preuzet! 📥');
+}
+
+function shareWhatsApp() {
+  const link = document.getElementById('share-link-input').value;
+  const msg = encodeURIComponent(`🎁 Pogledaj moju listu želja na Željicama! ${link}`);
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+}
+
+// ══════════════════════════════════════
+//  GUEST MODE
+// ══════════════════════════════════════
+function openGuestList() {
+  const code = document.getElementById('guest-code-input').value.trim().toUpperCase();
+  if (!code) { toast('Upiši kod liste! 🔑'); return; }
+  const list = loadList(code);
+  if (!list) { toast('Lista nije pronađena. Provjeri kod.'); return; }
+  openGuestView(list);
+}
+
+function openGuestView(list) {
+  currentGuestList = list;
+  isGuestMode = true;
+
+  document.getElementById('guest-event-badge').textContent = list.occasion;
+  document.getElementById('guest-list-title').textContent = list.ownerName + 'ina Lista 🎀';
+  document.getElementById('guest-list-subtitle').textContent = list.message;
+
+  if (list.date) {
+    document.getElementById('guest-date-pill').style.display = 'flex';
+    document.getElementById('guest-date-text').textContent = formatDate(list.date);
+  }
+
+  renderGuestGifts(list.gifts);
+  show('guest');
+}
+
+function renderGuestGifts(gifts) {
+  const grid = document.getElementById('guest-gifts-grid');
+  const total = gifts.length;
+  const claimed = gifts.filter(g => g.claimedBy).length;
+  const pct = total > 0 ? Math.round((claimed/total)*100) : 0;
+  document.getElementById('guest-progress-bar').style.width = pct + '%';
+  document.getElementById('guest-progress-label').textContent = total > 0
+    ? `${claimed} od ${total} poklona već rezervirano (${pct}%)`
+    : 'Još nema poklona na listi';
+
+  if (!gifts.length) {
+    grid.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-light)">Lista je prazna 🌸</div>';
+    return;
+  }
+  grid.innerHTML = gifts.map((g, i) => giftCardHTML(g, i, true)).join('');
+}
+
+// ══════════════════════════════════════
+//  CLAIM MODAL
+// ══════════════════════════════════════
+function openClaimModal(giftIndex) {
+  claimingGiftId = giftIndex;
+  const gift = currentGuestList.gifts[giftIndex];
+  document.getElementById('claim-gift-name-display').textContent = '🎁 ' + gift.name;
+  document.getElementById('claim-name-input').value = '';
+  document.getElementById('claim-modal').classList.add('open');
+}
+
+function closeClaimModal() {
+  document.getElementById('claim-modal').classList.remove('open');
+  claimingGiftId = null;
+}
+
+function confirmClaim() {
+  const name = document.getElementById('claim-name-input').value.trim();
+  if (!name) { toast('Upiši svoje ime! 🌸'); return; }
+
+  const list = loadList(currentGuestList.code);
+  if (!list) { toast('Greška – lista nije pronađena'); return; }
+
+  if (list.gifts[claimingGiftId].claimedBy) {
+    toast('Netko je već rezervirao ovaj poklon!'); closeClaimModal(); return;
+  }
+
+  list.gifts[claimingGiftId].claimedBy = name;
+  saveList(list);
+  currentGuestList = list;
+
+  closeClaimModal();
+  renderGuestGifts(list.gifts);
+  toast('Poklon rezerviran! 🎉 Hvala ti, ' + name + '!');
+}
+
+// ══════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('hr-HR', { day:'numeric', month:'long', year:'numeric' });
+}
+
+let toastTimeout;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════
+//  URL PARAMS – open list via link
+// ══════════════════════════════════════
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('lista');
+  if (code) {
+    const list = loadList(code);
+    if (list) { openGuestView(list); return; }
+  }
+});
+
+// Close modal on backdrop click
+document.getElementById('claim-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeClaimModal();
+});
+</script>
+</body>
+</html>
